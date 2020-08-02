@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Ultra Pure Indicator</string>
+    <string name="text">Light Mode</string>
+    <string name="titles">Communicate</string>
+    <string name="Open">Open</string>
+    <string name="Close">Close</string>
+</resources>
