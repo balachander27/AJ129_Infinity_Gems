@@ -22,6 +22,7 @@ unsigned int flowMilliLitres;
 unsigned long totalMilliLitres;
 
 unsigned long oldTime;
+SoftwareSerial s(5,6);
 
 void setup() {
   // put your setup code here, to run once:
@@ -52,14 +53,11 @@ attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
 void loop() {
   
   
-  //
-  Serial.println(w_g);
-  w_g/=10;
-  Serial.println(w_g);
-  f1=flowrate();
+  //;
+  f1=(flowRate() / 60) * 1000;
   delay(500);
-  f2=flowrate();
-     if((millis() - oldTime) > 1000)    // Only process counters once per second
+  f2=(flowRate() / 60) * 1000;
+  if(f2>f1)// Only process counters once per second
   { 
     // Disable the interrupt while calculating flow rate and sending the value to
     // the host
@@ -67,21 +65,6 @@ void loop() {
     oldTime = millis();
     flowMilliLitres = (flowRate() / 60) * 1000;
     totalMilliLitres += flowMilliLitres;
-    unsigned int frac;
-    Serial.print("Flow rate: ");
-    Serial.print(int(flowRate()));  // Print the integer part of the variable
-    Serial.print(".");             // Print the decimal point
-    // Determine the fractional part. The 10 multiplier gives us 1 decimal place.
-    frac = (flowRate - int(flowRate())) * 10;
-    Serial.print(frac, DEC) ;      // Print the fractional part of the variable
-    Serial.print("L/min");
-    // Print the number of litres flowed in this second
-    Serial.print("  Current Liquid Flowing: ");             // Output separator
-    Serial.print(flowMilliLitres);
-    Serial.print("mL/Sec");
-    Serial.print("  Output Liquid Quantity: ");             // Output separator
-    Serial.print(totalMilliLitres);
-    Serial.println("mL"); 
     pulseCount = 0;
     attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
   }
@@ -104,17 +87,18 @@ void loop() {
    char w[10];
    char v[10];
    st=" ";
-   float green=2.43;
-  float blue=3.21;
-  char colour1[10];
-  char colour3[10];
   st="";
-  dtostrf(green,4,2,colour1);
-  dtostrf(blue,4,2,colour3);
+  dtostrf(weight,4,2,w);
+  dtostrf(vol,4,2,v);
   String colour2=",";
   
-  String war=st+colour1+colour2+colour3;
-  Serial.println(war);
+  String war=st+colour1+weight+vol+st;
+
+if(s.available()>0)
+{
+ s.write(war);
+}
+   
   }
 }
 float flowRate()
