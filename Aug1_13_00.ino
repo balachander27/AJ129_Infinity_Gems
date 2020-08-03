@@ -1,6 +1,7 @@
 #include <HX711.h>
 #define DOUT  4
 #define CLK  3
+#define rl  7
 HX711 scale;
 float calibration_factor = -1240;
 float temp_wt;
@@ -25,6 +26,7 @@ unsigned long oldTime;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  pinMode(7,OUTPUT);
   Serial.println("HX711 calibration sketch");
   scale.begin(DOUT, CLK);
   scale.set_scale();
@@ -51,13 +53,6 @@ void loop() {
   
   
   //
-  w_g=0;
-  for(int i=0;i<10;i++)
-  {
-    temp_wt=scale.get_units();
-    temp_wt/=3.61;
-    w_g+=temp_wt;    
-  }
   Serial.println(w_g);
   w_g/=10;
   Serial.println(w_g);
@@ -91,8 +86,35 @@ void loop() {
     attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
   }
   else if(f2==0)
+  {   w_g=0;
+  for(int i=0;i<10;i++)
   {
-    attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
+    temp_wt=scale.get_units();
+    temp_wt/=3.61;
+    w_g+=temp_wt;    
+  }
+   w_g/=10;
+   delay(500);
+   pinMode(7,HIGH);
+   delay(2000);
+   pinMode(7,LOW);
+   attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
+   float weight=w_g;
+   float vol=totalMilliLitres;
+   char w[10];
+   char v[10];
+   st=" ";
+   float green=2.43;
+  float blue=3.21;
+  char colour1[10];
+  char colour3[10];
+  st="";
+  dtostrf(green,4,2,colour1);
+  dtostrf(blue,4,2,colour3);
+  String colour2=",";
+  
+  String war=st+colour1+colour2+colour3;
+  Serial.println(war);
   }
 }
 float flowRate()
