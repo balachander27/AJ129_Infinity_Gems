@@ -43,7 +43,6 @@ void loop()
 //sdata = analogRead(vr);
 //myString = String(sdata); 
 //Serial.println(myString); // convert mass and vol to string
-Firebase.pushString ("mass", firebaseHumid); 
-Firebase.pushString ("vol", firebaseTemp); 
+Firebase.pushString ("mass , vol", firebaseHumid); 
 delay(1000);            
 }
